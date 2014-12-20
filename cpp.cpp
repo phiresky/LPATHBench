@@ -28,13 +28,12 @@ vector<node> readPlaces(){
   return nodes;
 }
 
-template <int T>
-int getLongestPath(const vector<node> &nodes, const int nodeID, bitset<T> visited){
+int getLongestPath(const vector<node> &nodes, const int nodeID, vector<size_t>& visited){
   visited[nodeID] = true;
   int max=0;
   for(const route &neighbour: nodes[nodeID].neighbours){
     if (visited[neighbour.dest] == false){
-      const int dist = neighbour.cost + getLongestPath<T>(nodes, neighbour.dest, visited);
+      const int dist = neighbour.cost + getLongestPath(nodes, neighbour.dest, visited);
       if (dist > max){
         max = dist;
       }
@@ -46,21 +45,8 @@ int getLongestPath(const vector<node> &nodes, const int nodeID, bitset<T> visite
 
 int getLongestPath(const vector<node> &nodes)
 {
-  if (nodes.size() <= 16) {
-     return getLongestPath<16>(nodes, 0, bitset<16>());
-  } else if (nodes.size() <= 256) {
-    return getLongestPath<256>(nodes, 0, bitset<256>());
-  } else if (nodes.size() <= 4096) {
-    return getLongestPath<4096>(nodes, 0, bitset<4096>());
-  } else if (nodes.size() <= 65536) {
-    return getLongestPath<65536>(nodes, 0, bitset<65536>());
-  } else if (nodes.size() <= 1048576) {
-    return getLongestPath<1048576>(nodes, 0, bitset<1048576>());
-  } else if (nodes.size() <= 16777216) {
-    return getLongestPath<16777216>(nodes, 0, bitset<16777216>());
-  } else {
-    return -1;
-  }
+  vector<size_t> visited(nodes.size());
+  return getLongestPath(nodes, 0, visited);
 }
 
 int main(int argc, char** argv){
